@@ -1,0 +1,56 @@
+name: kind-test
+on: pull_request
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.21.x"
+
+      - uses: actions/checkout@v4
+
+      - uses: ko-build/setup-ko@v0.6
+
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.8.0
+        with:
+          cluster_name: kind
+
+      - name: Build k8smultiarcher image
+        env:
+          KO_DOCKER_REPO: kind.local
+        run: |
+          ko build -B --platform linux/amd64 .
+
+      - name: Install cert-manager
+        run: |
+          kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.2/cert-manager.yaml
+          kubectl wait --for=condition=available --timeout=60s deployment/cert-manager -n cert-manager
+          kubectl wait --for=condition=available --timeout=60s deployment/cert-manager-cainjector -n cert-manager
+          kubectl wait --for=condition=available --timeout=60s deployment/cert-manager-webhook -n cert-manager
+
+      - name: Install k8smultiarcher
+        run: |
+          kubectl apply -f manifests/k8smultiarcher-kind.yaml
+          kubectl wait --for=condition=available --timeout=60s deployment/k8smultiarcher -n k8smultiarcher
+          sleep 5
+
+      - name: Test k8smultiarcher - pod with image with arm64 manifest
+        run: |
+          kubectl run tmp-pod-debian --restart Never --image debian:12-slim -- sleep 1
+          result=$(kubectl get pod -o json tmp-pod-debian | jq '.spec.tolerations | .[] | select(.key == "k8smultiarcher" and .value == "arm64Supported")')
+
+          if [ -z "$result" ]; then
+            exit 1
+          fi
+
+      - name: Test k8smultiarcher - pod with image without arm64 manifest
+        run: |
+          kubectl run tmp-pod-percona --restart Never --image percona:5.6-centos -- sleep 1
+          result=$(kubectl get pod -o json tmp-pod-percona | jq '.spec.tolerations | .[] | select(.key == "k8smultiarcher" and .value == "arm64Supported")')
+
+          if [ -n "$result" ]; then
+            exit 1
+          fi
