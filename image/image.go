@@ -14,7 +14,6 @@ import (
 func GetManifest(name string) (manifest.Manifest, error) {
 	rc := regclient.New()
 	ref, _ := ref.New(name)
-	fmt.Printf("%+v\n", ref)
 	m, err := rc.ManifestGet(context.Background(), ref)
 	if err != nil {
 		log.Printf("got err getting manifest: %s", err)

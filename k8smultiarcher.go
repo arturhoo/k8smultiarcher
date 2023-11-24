@@ -1,7 +1,11 @@
 package main
 
 import (
-	"github.com/arturhoo/k8smultiarcher/image"
+	"fmt"
+	"io"
+	"os"
+
+	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -9,11 +13,57 @@ import (
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
-	name := "gcr.io/distroless/static-debian12"
-	arm64Supported := image.DoesImageSupportArm64(name)
-	if arm64Supported {
-		log.Info().Msg("arm is supported!")
-	} else {
-		log.Info().Msg("arm not supported!")
+	r := gin.Default()
+	r.POST("/mutate", mutateHandler)
+	r.GET("/healthz", healthzHandler)
+	r.GET("/livez", livezHandler)
+	startServer(r)
+}
+
+func mutateHandler(c *gin.Context) {
+	body, _ := io.ReadAll(c.Request.Body)
+	review, err := ProcessAdmissionReview(body)
+	if err != nil {
+		log.Printf("failed process pod admission review: %s", err)
+		return
 	}
+	c.JSON(200, review)
+}
+
+func healthzHandler(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"status": "ok",
+	})
+}
+
+func livezHandler(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"status": "ok",
+	})
+}
+
+func startServer(r *gin.Engine) {
+	host := os.Getenv("HOST")
+	port := os.Getenv("PORT")
+	tlsEnabled := os.Getenv("TLS_ENABLED")
+	if port == "" {
+		if tlsEnabled == "true" {
+			port = "8443"
+		} else {
+			port = "8080"
+		}
+	}
+	addr := fmt.Sprintf("%s:%s", host, port)
+
+	if tlsEnabled == "true" {
+		var certPath, keyPath string
+		if certPath = os.Getenv("CERT_PATH"); certPath == "" {
+			certPath = "./certs/tls.crt"
+		}
+		if keyPath = os.Getenv("KEY_PATH"); keyPath == "" {
+			keyPath = "./certs/tls.key"
+		}
+		r.RunTLS(addr, certPath, keyPath)
+	}
+	r.Run(addr)
 }
