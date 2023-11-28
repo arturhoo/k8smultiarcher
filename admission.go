@@ -17,7 +17,7 @@ var MultiarchToleration = corev1.Toleration{
 	Effect:   "NoSchedule",
 }
 
-func ProcessAdmissionReview(requestBody []byte) (*admissionv1.AdmissionReview, error) {
+func ProcessAdmissionReview(cache Cache, requestBody []byte) (*admissionv1.AdmissionReview, error) {
 	review, err := AdmissionReviewFromRequest(requestBody)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func ProcessAdmissionReview(requestBody []byte) (*admissionv1.AdmissionReview, e
 		Allowed: true,
 	}
 
-	if !DoesPodSupportArm64(pod) {
+	if !DoesPodSupportArm64(cache, pod) {
 		review.Response = &response
 		return review, nil
 	}
@@ -91,10 +91,10 @@ func AdmissionReviewFromRequest(body []byte) (*admissionv1.AdmissionReview, erro
 	return &review, nil
 }
 
-func DoesPodSupportArm64(pod *corev1.Pod) bool {
+func DoesPodSupportArm64(cache Cache, pod *corev1.Pod) bool {
 	supported := true
 	for _, container := range pod.Spec.Containers {
-		if !DoesImageSupportArm64(container.Image) {
+		if !DoesImageSupportArm64(cache, container.Image) {
 			supported = false
 		}
 	}

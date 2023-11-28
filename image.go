@@ -33,7 +33,11 @@ func GetManifest(name string) (manifest.Manifest, error) {
 	return m, nil
 }
 
-func DoesImageSupportArm64(name string) bool {
+func DoesImageSupportArm64(cache Cache, name string) bool {
+	if val, ok := cache.Get(name); ok {
+		return val
+	}
+
 	m, err := GetManifest(name)
 	if err != nil {
 		log.Printf("got err getting manifest: %s", err)
