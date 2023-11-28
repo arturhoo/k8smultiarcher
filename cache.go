@@ -5,6 +5,7 @@ import (
 
 	"github.com/bluele/gcache"
 	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog/log"
 )
 
 const cacheSize = 100000
@@ -32,7 +33,10 @@ func (c InMemoryCache) Get(key string) (bool, bool) {
 }
 
 func (c *InMemoryCache) Set(key string, value bool) {
-	c.cache.Set(key, value)
+	err := c.cache.Set(key, value)
+	if err != nil {
+		log.Printf("got error trying to set key on InMemoryCache: %s", err)
+	}
 }
 
 type RedisCache struct {
