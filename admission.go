@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/arturhoo/k8smultiarcher/image"
-
 	"github.com/mattbaird/jsonpatch"
 	"github.com/rs/zerolog/log"
 	admissionv1 "k8s.io/api/admission/v1"
@@ -96,7 +94,7 @@ func AdmissionReviewFromRequest(body []byte) (*admissionv1.AdmissionReview, erro
 func DoesPodSupportArm64(pod *corev1.Pod) bool {
 	supported := true
 	for _, container := range pod.Spec.Containers {
-		if !image.DoesImageSupportArm64(container.Image) {
+		if !DoesImageSupportArm64(container.Image) {
 			supported = false
 		}
 	}
