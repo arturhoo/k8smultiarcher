@@ -21,7 +21,11 @@ func main() {
 }
 
 func mutateHandler(c *gin.Context) {
-	body, _ := io.ReadAll(c.Request.Body)
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Error().Msgf("failed to read request body: %s", err)
+	}
+
 	review, err := ProcessAdmissionReview(body)
 	if err != nil {
 		log.Printf("failed process pod admission review: %s", err)

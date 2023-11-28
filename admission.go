@@ -35,7 +35,7 @@ func ProcessAdmissionReview(requestBody []byte) (*admissionv1.AdmissionReview, e
 	pod := &corev1.Pod{}
 	err = json.Unmarshal(obj.Raw, pod)
 	if err != nil {
-		log.Error().Msg("failed to unmarshal pod")
+		log.Error().Msgf("failed to unmarshal pod: %s", err)
 		return nil, err
 	}
 
@@ -50,9 +50,23 @@ func ProcessAdmissionReview(requestBody []byte) (*admissionv1.AdmissionReview, e
 	}
 
 	AddMultiarchTolerationToPod(pod)
-	modifiedPod, _ := json.Marshal(pod)
-	patch, _ := jsonpatch.CreatePatch(obj.Raw, modifiedPod)
-	jsonPatch, _ := json.Marshal(patch)
+	modifiedPod, err := json.Marshal(pod)
+	if err != nil {
+		log.Error().Msgf("failed to marshal pod: %s", err)
+		return nil, err
+	}
+
+	patch, err := jsonpatch.CreatePatch(obj.Raw, modifiedPod)
+	if err != nil {
+		log.Error().Msgf("failed to create patch for pod: %s", err)
+		return nil, err
+	}
+
+	jsonPatch, err := json.Marshal(patch)
+	if err != nil {
+		log.Error().Msgf("failed to marshal patch: %s", err)
+		return nil, err
+	}
 
 	pt := admissionv1.PatchTypeJSONPatch
 	response.PatchType = &pt

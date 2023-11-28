@@ -13,11 +13,18 @@ import (
 
 func GetManifest(name string) (manifest.Manifest, error) {
 	rc := regclient.New()
-	ref, _ := ref.New(name)
+	ref, err := ref.New(name)
+	if err != nil {
+		log.Printf("got err parsing image name manifest: %s", err)
+		return nil, err
+	}
+
 	m, err := rc.ManifestGet(context.Background(), ref)
 	if err != nil {
 		log.Printf("got err getting manifest: %s", err)
+		return nil, err
 	}
+
 	if !m.IsList() {
 		err := fmt.Errorf("provided image name has no manifest list")
 		log.Print(err)
