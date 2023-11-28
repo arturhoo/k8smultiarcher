@@ -10,8 +10,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var cache Cache
+
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	cache = NewInMemoryCache()
 
 	r := gin.Default()
 	r.POST("/mutate", mutateHandler)
@@ -26,7 +29,7 @@ func mutateHandler(c *gin.Context) {
 		log.Error().Msgf("failed to read request body: %s", err)
 	}
 
-	review, err := ProcessAdmissionReview(body)
+	review, err := ProcessAdmissionReview(cache, body)
 	if err != nil {
 		log.Printf("failed process pod admission review: %s", err)
 		return
@@ -58,7 +61,6 @@ func startServer(r *gin.Engine) {
 		}
 	}
 	addr := fmt.Sprintf("%s:%s", host, port)
-
 	if tlsEnabled == "true" {
 		var certPath, keyPath string
 		if certPath = os.Getenv("CERT_PATH"); certPath == "" {
