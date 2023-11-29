@@ -8,7 +8,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const cacheSize = 100000
+const (
+	cacheSizeDefault = 100000
+	redisAddrDefault = "localhost:6379"
+)
 
 type Cache interface {
 	Get(key string) (bool, bool)
@@ -19,7 +22,7 @@ type InMemoryCache struct {
 	cache gcache.Cache
 }
 
-func NewInMemoryCache() *InMemoryCache {
+func NewInMemoryCache(cacheSize int) *InMemoryCache {
 	gc := gcache.New(cacheSize).ARC().Build()
 	return &InMemoryCache{gc}
 }
@@ -43,10 +46,10 @@ type RedisCache struct {
 	client *redis.Client
 }
 
-func NewRedisCache() RedisCache {
-	return RedisCache{
+func NewRedisCache(redisAddr string) *RedisCache {
+	return &RedisCache{
 		redis.NewClient(&redis.Options{
-			Addr: "localhost:6379",
+			Addr: redisAddr,
 		}),
 	}
 }

@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestDoesImageSupportArm64(t *testing.T) {
-	cache := NewInMemoryCache()
+	cache := NewInMemoryCache(cacheSizeDefault)
 	cache.Set("image_with_arm_support", true)
 	cache.Set("image_without_arm_support", false)
 
