@@ -6,7 +6,7 @@ require (
 	github.com/bluele/gcache v0.0.2
 	github.com/gin-gonic/gin v1.9.1
 	github.com/mattbaird/jsonpatch v0.0.0-20230413205102-771768614e91
-	github.com/redis/go-redis/v9 v9.3.0
+	github.com/redis/go-redis/v9 v9.4.0
 	github.com/regclient/regclient v0.5.6
 	github.com/rs/zerolog v1.31.0
 	k8s.io/api v0.28.4
