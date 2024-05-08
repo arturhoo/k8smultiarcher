@@ -1,6 +1,7 @@
 module github.com/arturhoo/k8smultiarcher
 
 go 1.21
+toolchain go1.22.2
 
 require (
 	github.com/bluele/gcache v0.0.2
@@ -9,7 +10,7 @@ require (
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/regclient/regclient v0.6.0
 	github.com/rs/zerolog v1.32.0
-	k8s.io/api v0.29.3
+	k8s.io/api v0.30.0
 )
 
 require (
@@ -22,7 +23,7 @@ require (
 	github.com/docker/libtrust v0.0.0-20160708172513-aabc10ec26b7 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-logr/logr v1.3.0 // indirect
+	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
@@ -51,8 +52,8 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/apimachinery v0.29.3 // indirect
-	k8s.io/klog/v2 v2.110.1 // indirect
+	k8s.io/apimachinery v0.30.0 // indirect
+	k8s.io/klog/v2 v2.120.1 // indirect
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
