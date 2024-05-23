@@ -8,7 +8,7 @@ require (
 	github.com/mattbaird/jsonpatch v0.0.0-20230413205102-771768614e91
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/regclient/regclient v0.6.0
-	github.com/rs/zerolog v1.32.0
+	github.com/rs/zerolog v1.33.0
 	k8s.io/api v0.30.0
 )
 
