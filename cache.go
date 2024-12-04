@@ -32,7 +32,11 @@ func (c InMemoryCache) Get(key string) (bool, bool) {
 	if err != nil {
 		return false, false
 	}
-	return val.(bool), true
+	boolVal, ok := val.(bool)
+	if !ok {
+		log.Fatal().Msg("found non boolean cache value")
+	}
+	return boolVal, true
 }
 
 func (c *InMemoryCache) Set(key string, value bool) {
