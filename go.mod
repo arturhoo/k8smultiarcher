@@ -1,6 +1,6 @@
 module github.com/arturhoo/k8smultiarcher
 
-go 1.23.2
+go 1.23.5
 
 require (
 	github.com/bluele/gcache v0.0.2
