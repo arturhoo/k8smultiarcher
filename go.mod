@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/mattbaird/jsonpatch v0.0.0-20230413205102-771768614e91
 	github.com/redis/go-redis/v9 v9.7.0
-	github.com/regclient/regclient v0.8.0
+	github.com/regclient/regclient v0.8.1
 	github.com/rs/zerolog v1.33.0
 	k8s.io/api v0.32.1
 )
@@ -50,7 +50,7 @@ require (
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/net v0.30.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
