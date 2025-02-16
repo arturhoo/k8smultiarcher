@@ -9,7 +9,7 @@ require (
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/regclient/regclient v0.8.1
 	github.com/rs/zerolog v1.33.0
-	k8s.io/api v0.32.1
+	k8s.io/api v0.32.2
 )
 
 require (
@@ -55,7 +55,7 @@ require (
 	google.golang.org/protobuf v1.35.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/apimachinery v0.32.1 // indirect
+	k8s.io/apimachinery v0.32.2 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738 // indirect
 	sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3 // indirect
