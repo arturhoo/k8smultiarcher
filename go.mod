@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/mattbaird/jsonpatch v0.0.0-20230413205102-771768614e91
 	github.com/redis/go-redis/v9 v9.7.1
-	github.com/regclient/regclient v0.8.1
+	github.com/regclient/regclient v0.8.2
 	github.com/rs/zerolog v1.33.0
 	k8s.io/api v0.32.2
 )
