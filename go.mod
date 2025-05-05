@@ -1,13 +1,13 @@
 module github.com/arturhoo/k8smultiarcher
 
-go 1.23.5
+go 1.24.2
 
 require (
 	github.com/bluele/gcache v0.0.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/mattbaird/jsonpatch v0.0.0-20230413205102-771768614e91
 	github.com/redis/go-redis/v9 v9.7.3
-	github.com/regclient/regclient v0.8.2
+	github.com/regclient/regclient v0.8.3
 	github.com/rs/zerolog v1.34.0
 	k8s.io/api v0.32.3
 )
@@ -32,7 +32,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.11 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
