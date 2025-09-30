@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
+	"log/slog"
+	"time"
 
 	"github.com/bluele/gcache"
 	"github.com/redis/go-redis/v9"
-	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -34,7 +35,8 @@ func (c InMemoryCache) Get(key string) (bool, bool) {
 	}
 	boolVal, ok := val.(bool)
 	if !ok {
-		log.Fatal().Msg("found non boolean cache value")
+		slog.Error("found non boolean cache value")
+		return false, false
 	}
 	return boolVal, true
 }
@@ -42,7 +44,7 @@ func (c InMemoryCache) Get(key string) (bool, bool) {
 func (c *InMemoryCache) Set(key string, value bool) {
 	err := c.cache.Set(key, value)
 	if err != nil {
-		log.Printf("got error trying to set key on InMemoryCache: %s", err)
+		slog.Error("failed to set key on InMemoryCache", "error", err)
 	}
 }
 
@@ -59,7 +61,8 @@ func NewRedisCache(redisAddr string) *RedisCache {
 }
 
 func (c RedisCache) Get(key string) (bool, bool) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	val, err := c.client.Get(ctx, key).Bool()
 	if err != nil {
 		return false, false
@@ -68,6 +71,10 @@ func (c RedisCache) Get(key string) (bool, bool) {
 }
 
 func (c *RedisCache) Set(key string, value bool) {
-	ctx := context.Background()
-	c.client.Set(ctx, key, value, 0)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	err := c.client.Set(ctx, key, value, 0).Err()
+	if err != nil {
+		slog.Error("failed to set key on RedisCache", "error", err)
+	}
 }

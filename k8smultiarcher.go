@@ -1,20 +1,19 @@
 package main
 
 import (
+	"cmp"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 var cache Cache
 
 func main() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	configureCache()
 
 	r := gin.Default()
@@ -27,12 +26,15 @@ func main() {
 func mutateHandler(c *gin.Context) {
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		log.Error().Msgf("failed to read request body: %s", err)
+		slog.Error("failed to read request body", "error", err)
+		c.JSON(400, gin.H{"error": "invalid request body"})
+		return
 	}
 
 	review, err := ProcessAdmissionReview(cache, body)
 	if err != nil {
-		log.Printf("failed process pod admission review: %s", err)
+		slog.Error("failed to process pod admission review", "error", err)
+		c.JSON(500, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(200, review)
@@ -51,31 +53,25 @@ func livezHandler(c *gin.Context) {
 }
 
 func configureCache() {
-	var cacheChoice, cacheSizeStr string
-	var cacheSize int
-	var err error
-
-	if cacheSizeStr = os.Getenv("CACHE_SIZE"); cacheSizeStr == "" {
-		cacheSize = cacheSizeDefault
-	} else {
-		cacheSize, err = strconv.Atoi(cacheSizeStr)
-		if err != nil {
-			log.Fatal().Msgf("invalid cache size: %s", cacheSizeStr)
-		}
+	cacheSizeStr := cmp.Or(os.Getenv("CACHE_SIZE"), strconv.Itoa(cacheSizeDefault))
+	cacheSize, err := strconv.Atoi(cacheSizeStr)
+	if err != nil {
+		slog.Error("invalid cache size", "value", cacheSizeStr, "error", err)
+		os.Exit(1)
 	}
 
-	if cacheChoice = os.Getenv("CACHE"); cacheChoice == "" || cacheChoice == "inmemory" {
-		log.Print("using in-memory cache")
+	cacheChoice := cmp.Or(os.Getenv("CACHE"), "inmemory")
+	switch cacheChoice {
+	case "inmemory":
+		slog.Info("using in-memory cache", "size", cacheSize)
 		cache = NewInMemoryCache(cacheSize)
-	} else if cacheChoice == "redis" {
-		var redisAddr string
-		if redisAddr = os.Getenv("REDIS_ADDR"); redisAddr == "" {
-			redisAddr = redisAddrDefault
-		}
-		log.Print("using redis cache")
+	case "redis":
+		redisAddr := cmp.Or(os.Getenv("REDIS_ADDR"), redisAddrDefault)
+		slog.Info("using redis cache", "addr", redisAddr)
 		cache = NewRedisCache(redisAddr)
-	} else {
-		log.Fatal().Msgf("invalid cache choice. must be either 'redis' or 'inmemory': %s.", cacheChoice)
+	default:
+		slog.Error("invalid cache choice", "value", cacheChoice)
+		os.Exit(1)
 	}
 }
 
