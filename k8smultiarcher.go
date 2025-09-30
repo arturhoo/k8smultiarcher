@@ -61,14 +61,15 @@ func configureCache() {
 	}
 
 	cacheChoice := cmp.Or(os.Getenv("CACHE"), "inmemory")
-	if cacheChoice == "inmemory" {
+	switch cacheChoice {
+	case "inmemory":
 		slog.Info("using in-memory cache", "size", cacheSize)
 		cache = NewInMemoryCache(cacheSize)
-	} else if cacheChoice == "redis" {
+	case "redis":
 		redisAddr := cmp.Or(os.Getenv("REDIS_ADDR"), redisAddrDefault)
 		slog.Info("using redis cache", "addr", redisAddr)
 		cache = NewRedisCache(redisAddr)
-	} else {
+	default:
 		slog.Error("invalid cache choice", "value", cacheChoice)
 		os.Exit(1)
 	}
