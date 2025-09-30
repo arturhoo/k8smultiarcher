@@ -1,7 +1,7 @@
 package main
 
 import (
-	"reflect"
+	"slices"
 	"testing"
 
 	corev1 "k8s.io/api/core/v1"
@@ -39,7 +39,7 @@ func TestAddMultiarchTolerationToPod(t *testing.T) {
 		MultiarchToleration,
 	}
 
-	if !reflect.DeepEqual(pod.Spec.Tolerations, expectedTolerations) {
+	if !slices.Equal(pod.Spec.Tolerations, expectedTolerations) {
 		t.Errorf("Unexpected tolerations. Expected: %v, Got: %v", expectedTolerations, pod.Spec.Tolerations)
 	}
 }

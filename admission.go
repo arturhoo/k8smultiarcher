@@ -2,10 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log/slog"
+	"slices"
 
 	"github.com/mattbaird/jsonpatch"
-	"github.com/rs/zerolog/log"
 	admissionv1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -25,7 +27,7 @@ func ProcessAdmissionReview(cache Cache, requestBody []byte) (*admissionv1.Admis
 
 	if review.Request.Kind.Kind != "Pod" {
 		err := fmt.Errorf("got a request for a kind different than pod: %s", review.Request.Kind.Kind)
-		log.Print(err)
+		slog.Error("invalid request kind", "error", err)
 		return nil, err
 	}
 
@@ -33,7 +35,7 @@ func ProcessAdmissionReview(cache Cache, requestBody []byte) (*admissionv1.Admis
 	pod := &corev1.Pod{}
 	err = json.Unmarshal(obj.Raw, pod)
 	if err != nil {
-		log.Error().Msgf("failed to unmarshal pod: %s", err)
+		slog.Error("failed to unmarshal pod", "error", err)
 		return nil, err
 	}
 
@@ -50,19 +52,19 @@ func ProcessAdmissionReview(cache Cache, requestBody []byte) (*admissionv1.Admis
 	AddMultiarchTolerationToPod(pod)
 	modifiedPod, err := json.Marshal(pod)
 	if err != nil {
-		log.Error().Msgf("failed to marshal pod: %s", err)
+		slog.Error("failed to marshal pod", "error", err)
 		return nil, err
 	}
 
 	patch, err := jsonpatch.CreatePatch(obj.Raw, modifiedPod)
 	if err != nil {
-		log.Error().Msgf("failed to create patch for pod: %s", err)
+		slog.Error("failed to create patch for pod", "error", err)
 		return nil, err
 	}
 
 	jsonPatch, err := json.Marshal(patch)
 	if err != nil {
-		log.Error().Msgf("failed to marshal patch: %s", err)
+		slog.Error("failed to marshal patch", "error", err)
 		return nil, err
 	}
 
@@ -78,13 +80,13 @@ func AdmissionReviewFromRequest(body []byte) (*admissionv1.AdmissionReview, erro
 	var review admissionv1.AdmissionReview
 	err := json.Unmarshal(body, &review)
 	if err != nil {
-		log.Printf("got err while unmarshalling request body: %s", err)
+		slog.Error("failed to unmarshal request body", "error", err)
 		return nil, err
 	}
 
 	if review.Request == nil {
 		err := fmt.Errorf("got an invalid admission request")
-		log.Print(err)
+		slog.Error("invalid admission request", "error", err)
 		return nil, err
 	}
 
@@ -92,21 +94,22 @@ func AdmissionReviewFromRequest(body []byte) (*admissionv1.AdmissionReview, erro
 }
 
 func DoesPodSupportArm64(cache Cache, pod *corev1.Pod) bool {
-	supported := true
+	var errs []error
 	for _, container := range pod.Spec.Containers {
 		if !DoesImageSupportArm64(cache, container.Image) {
-			supported = false
+			errs = append(errs, fmt.Errorf("image %s lacks arm64 support", container.Image))
 		}
 	}
-	return supported
+	if len(errs) > 0 {
+		slog.Info("pod has images without arm64 support", "error", errors.Join(errs...))
+		return false
+	}
+	return true
 }
 
 func AddMultiarchTolerationToPod(pod *corev1.Pod) {
-	for _, toleration := range pod.Spec.Tolerations {
-		if toleration == MultiarchToleration {
-			return
-		}
+	if slices.Contains(pod.Spec.Tolerations, MultiarchToleration) {
+		return
 	}
-
 	pod.Spec.Tolerations = append(pod.Spec.Tolerations, MultiarchToleration)
 }
