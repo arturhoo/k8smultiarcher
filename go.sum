@@ -90,8 +90,8 @@ github.com/quic-go/quic-go v0.54.0 h1:6s1YB9QotYI6Ospeiguknbp2Znb/jZYjZLRXn9kMQB
 github.com/quic-go/quic-go v0.54.0/go.mod h1:e68ZEaCdyviluZmy44P6Iey98v/Wfz6HCjQEm+l8zTY=
 github.com/redis/go-redis/v9 v9.17.2 h1:P2EGsA4qVIM3Pp+aPocCJ7DguDHhqrXNhVcEp4ViluI=
 github.com/redis/go-redis/v9 v9.17.2/go.mod h1:u410H11HMLoB+TP67dz8rL9s6QW2j76l0//kSOd3370=
-github.com/regclient/regclient v0.11.0 h1:5HibEqBV9jwgmcbFGAXiTbfk85F7YEeNH52pUIVfRjc=
-github.com/regclient/regclient v0.11.0/go.mod h1:vgblZTw50tGVxIMgYr8uHCAmIZx2gBQS/dPaQNngSeg=
+github.com/regclient/regclient v0.11.1 h1:MtxUaEVh2bgBzAX9wqH71cB4NWom4EdZ/31Z9f7ZwCU=
+github.com/regclient/regclient v0.11.1/go.mod h1:4Wu8lxr/v0QzrIId6cJj/2BH8gP3dUHes37lZJP0J90=
 github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR38lUII=
 github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
 github.com/sirupsen/logrus v1.9.3 h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ=
