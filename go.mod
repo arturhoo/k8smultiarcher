@@ -8,7 +8,7 @@ require (
 	github.com/mattbaird/jsonpatch v0.0.0-20240118010651-0ba75a80ca38
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/regclient/regclient v0.11.1
-	k8s.io/api v0.34.2
+	k8s.io/api v0.34.3
 )
 
 require (
@@ -58,7 +58,7 @@ require (
 	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	k8s.io/apimachinery v0.34.2 // indirect
+	k8s.io/apimachinery v0.34.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
