@@ -6,7 +6,7 @@ require (
 	github.com/bluele/gcache v0.0.2
 	github.com/gin-gonic/gin v1.11.0
 	github.com/mattbaird/jsonpatch v0.0.0-20240118010651-0ba75a80ca38
-	github.com/redis/go-redis/v9 v9.17.2
+	github.com/redis/go-redis/v9 v9.18.0
 	github.com/regclient/regclient v0.11.1
 	k8s.io/api v0.34.2
 )
@@ -46,6 +46,7 @@ require (
 	github.com/ugorji/go/codec v1.3.0 // indirect
 	github.com/ulikunitz/xz v0.5.15 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
+	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/arch v0.20.0 // indirect
